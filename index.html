@@ -896,11 +896,14 @@ function t(e,i,o){var n=this;(0,u.default)(this,t),this.body=e,this.canvas=i,thi
 ***/
 // %/ //
 //{{{
+;(function() {
 var cssName = &quot;vis.css&quot;,
-    css = store.getTiddlerText(&quot;VisGraphPlugin&quot;+&quot;##&quot;+cssName).replace(/^\/\//gm,&quot;&quot;);
-css = css.substring(4,css.length-4); // cut leading ***/ and trailing /*** of the section
+	css = store.getTiddlerText(&quot;VisGraphPlugin&quot; + &quot;##&quot; + cssName).replace(/^\/\//gm, &quot;&quot;);
+css = css.substring(4, css.length - 4); // cut leading ***/ and trailing /*** of the section
 config.shadowTiddlers[cssName] = css;
 store.addNotification(cssName, refreshStyles);
+store.addNotification(&quot;ColorPalette&quot;, function(smth, doc) { refreshStyles(cssName, doc) })
+})();
 //}}}
 // /%
 /***
@@ -959,11 +962,14 @@ store.addNotification(cssName, refreshStyles);
 ***/
 // %/ //
 //{{{
+;(function() {
 var cssName = &quot;VisGraphStyleSheet&quot;,
-    css = store.getTiddlerText(&quot;VisGraphPlugin&quot;+&quot;##&quot;+cssName).replace(/^\/\//gm,&quot;&quot;);
-css = css.substring(4,css.length-4); // cut leading ***/ and trailing /*** of the section
+	css = store.getTiddlerText(&quot;VisGraphPlugin&quot; + &quot;##&quot; + cssName).replace(/^\/\//gm, &quot;&quot;);
+css = css.substring(4, css.length - 4); // cut leading ***/ and trailing /*** of the section
 config.shadowTiddlers[cssName] = css;
 store.addNotification(cssName, refreshStyles);
+store.addNotification(&quot;ColorPalette&quot;, function(smth, doc) { refreshStyles(cssName, doc) })
+})();
 //}}}
 //{{{
 config.macros.graph = {
@@ -999,8 +1005,8 @@ window.advancedMerge = function(reciever, source, preserveExisting)
 config.macros.graph.handler = function(place,macroName,params,wikifier,paramString,tiddler)
 {
 	// parse macro params
-	var pParams = paramString.parseParams(&quot;dataAndOptions&quot;,null,true,false, true),
-	    storageContainer = getParam(pParams,&quot;dataAndOptions&quot;,&quot;&quot;),
+	var pParams = paramString.parseParams(&quot;dataAndOptions&quot;, null, true, false, true),
+	    storageContainer = getParam(pParams, &quot;dataAndOptions&quot;, &quot;&quot;),
 		tiddlerTitle = tiddler.title, section,
 	    userSetId = getParam(pParams,&quot;id&quot;,&quot;&quot;),
 	    width = getParam(pParams,&quot;width&quot;,&quot;&quot;),
@@ -1025,9 +1031,9 @@ config.macros.graph.handler = function(place,macroName,params,wikifier,paramStri
 				callback(data);
 		}
 	    },
-	    useDefaultManipulation = getParam(pParams,&quot;manipulation&quot;, paramString.match( /\smanipulation(\s|$)/gm)),
-	    macroOptions = this.getEvaluated(getParam(pParams,&quot;options&quot;,&quot;{}&quot;)),
-	    handlers = this.getEvaluated(getParam(pParams,&quot;handlers&quot;,&quot;{}&quot;));
+	    useDefaultManipulation = getParam(pParams, &quot;manipulation&quot;, paramString.match( /\smanipulation(\s|$)/gm)),
+	    macroOptions = this.getEvaluated(getParam(pParams, &quot;options&quot;, &quot;{}&quot;)),
+	    handlers = this.getEvaluated(getParam(pParams, &quot;handlers&quot;, &quot;{}&quot;));
 	if(useDefaultManipulation)
 		macroOptions.manipulation = defaultManipulation;
 	var nonStoredOptions = macroOptions;
@@ -1045,7 +1051,7 @@ config.macros.graph.handler = function(place,macroName,params,wikifier,paramStri
 			|| tiddlerTitle; // ##section name
 		section = match ? match[2] : &quot;&quot;;
 
-		var dataAndOptions = this.getStoredDataAndOptions(tiddlerTitle,section),
+		var dataAndOptions = this.getStoredDataAndOptions(tiddlerTitle, section),
 		    storedData	   = dataAndOptions.data,
 		    storedOptions  = dataAndOptions.options;
 		if(storedData) {
@@ -1054,7 +1060,7 @@ config.macros.graph.handler = function(place,macroName,params,wikifier,paramStri
 		}
 		options = storedOptions || {};
 	}
-	window.advancedMerge(options,nonStoredOptions,true);
+	window.advancedMerge(options, nonStoredOptions, true);
 
 	var data = {
 		nodes: nodes,
