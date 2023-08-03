@@ -299,8 +299,9 @@ store.addNotification("ColorPalette", function(smth, doc) { refreshStyles(cssNam
 //	transform:	translateX(-50%);
 //	z-index:	10;
 //
-//	background-color: white; /*#f9f9f9;*/
-//	border:		3px solid #5394ed;
+//	background-color: [[ColorPalette::Background]];
+//	box-shadow:	0px 1px 10px [[ColorPalette::TertiaryLight]];
+//	border-radius:	10px;
 //	padding:	20px 40px;
 //	text-align:	center;
 //    }
