@@ -315,7 +315,7 @@ store.addNotification("ColorPalette", function(smth, doc) { refreshStyles(cssNam
 //}
 //.network-popUp tr td:first-child {
 //	border-right:	1px solid #aaaaaa;
-//	padding-right:	0.5em;
+//	padding-right: 0.5em;
 //}
 //.dataEditor {
 //	font-family: arial,helvetica;
@@ -323,10 +323,11 @@ store.addNotification("ColorPalette", function(smth, doc) { refreshStyles(cssNam
 //	border: none;
 //	padding: 0.3em 0.5em;
 //	overflow: hidden;
+//	/* vertical alignment of text */
 //	display: block;
 //}
 //.dataEditor:focus {
-//	outline: none;
+//	outline: none; /* cancel Chrome style */
 //	background-color: #f5f5ff;
 //}
 //.dataEditor:hover {
@@ -348,6 +349,19 @@ store.addNotification("ColorPalette", function(smth, doc) { refreshStyles(cssNam
 })();
 //}}}
 //{{{
+window.advancedMerge = function(reciever, source, preserveExisting)
+{
+    for(var key in source) {
+        if(reciever[key] === undefined)
+            reciever[key] = source[key];
+        else if(typeof reciever[key] === 'object' && reciever[key] !== null)
+            reciever[key] = window.advancedMerge(reciever[key], source[key], preserveExisting);
+        else if(!preserveExisting)
+            reciever[key] = source[key];
+    }
+    return reciever;
+};
+
 config.macros.graph = {
     defaultOptions: {
         interaction: { multiselect: true },
@@ -366,29 +380,17 @@ config.macros.graph.getStoredDataAndOptions = function(tiddlerTitle,section)
     // { data:{ nodes: [...], edges: [...] }, options: {...} }
     return dataAndOptions;
 };
-window.advancedMerge = function(reciever, source, preserveExisting)
-{
-    for(var key in source) {
-        if(reciever[key] === undefined)
-            reciever[key] = source[key];
-        else if(typeof reciever[key] === 'object' && reciever[key] !== null)
-            reciever[key] = window.advancedMerge(reciever[key], source[key], preserveExisting);
-        else if(!preserveExisting)
-            reciever[key] = source[key];
-    }
-    return reciever;
-};
-config.macros.graph.handler = function(place,macroName,params,wikifier,paramString,tiddler)
+config.macros.graph.handler = function(place, macroName, params, wikifier, paramString, tiddler)
 {
     // parse macro params
     var pParams = paramString.parseParams("dataAndOptions", null, true, false, true),
         storageContainer = getParam(pParams, "dataAndOptions", ""),
         tiddlerTitle = tiddler.title, section,
-        userSetId = getParam(pParams,"id",""),
-        width = getParam(pParams,"width",""),
-        height = getParam(pParams,"height",""),
-        nodes = new vis.DataSet(this.getEvaluated(getParam(pParams,"nodes","[]"))),
-        edges = new vis.DataSet(this.getEvaluated(getParam(pParams,"edges","[]"))),
+        userSetId = getParam(pParams, "id", ""),
+        width = getParam(pParams, "width", ""),
+        height = getParam(pParams, "height", ""),
+        nodes = new vis.DataSet(this.getEvaluated(getParam(pParams, "nodes", "[]"))),
+        edges = new vis.DataSet(this.getEvaluated(getParam(pParams, "edges", "[]"))),
         defaultManipulation = {
         addNode: function (data, callback) {
             var network = this, container = network.body.container;
@@ -492,26 +494,26 @@ config.macros.graph.handler = function(place,macroName,params,wikifier,paramStri
                     editEdge.nonSaving_editWithoutDrag =
                         editEdge.editWithoutDrag;
                     editEdge.editWithoutDrag =
-                        function(data,callback) {
+                        function(data, callback) {
                         // hijack callback to add saving
                         arguments[1] = function() {
-                            callback.apply(this,arguments);
+                            callback.apply(this, arguments);
                             config.macros.graph.saveDataAndOptions(network);
                         };
                         editEdge.nonSaving_editWithoutDrag
-                            .apply(this,arguments);
+                            .apply(this, arguments);
                     }.bind(network);
                 }
             } else {
                 mSettings['nonSaving_'+methodName] = mSettings[methodName];
-                mSettings[methodName] = function(data,callback) {
+                mSettings[methodName] = function(data, callback) {
                 // hijack callback to add saving
                 arguments[1] = function() {
-                    callback.apply(this,arguments);
+                    callback.apply(this, arguments);
                     config.macros.graph.saveDataAndOptions(network);
                 };
-                mSettings['nonSaving_'+methodName]
-                    .apply(this,arguments);
+                mSettings['nonSaving_' + methodName]
+                    .apply(this, arguments);
                 }.bind(network);
             }
         }
@@ -703,6 +705,7 @@ config.macros.graph.saveDataAndOptions = function(network,newOptions) {
             storedNode.id = undefined;
         // substitute generated ids with no semantics with simple indices
         if(/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.exec(storedNode.id)) {
+
             while(nodes[idIndex])
                 idIndex++;
             indexIds[storedNode.id] = idIndex; // remember the given index
