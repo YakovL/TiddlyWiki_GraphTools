@@ -1,6 +1,6 @@
 /***
 |Description|introduces the {{{graph}}} macro to create and edit graphs in ~WYSIWYGish manner|
-|Source     |https://yakovl.github.io/TiddlyWiki_GraphTools/#VisGraphPlugin|
+|Source     |https://github.com/YakovL/TiddlyWiki_GraphTools/blob/master/VisGraphPlugin.js|
 |Author     |Yakov Litvin|
 |Version    |0.6.5|
 |Credits    |to authors/contributors of vis.js|
