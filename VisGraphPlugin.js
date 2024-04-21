@@ -554,33 +554,34 @@ config.macros.graph.handler = function(place, macroName, params, wikifier, param
 
 config.macros.graph.createEditPopup = function(container, operationTitle, data, callback)
 {
-    var $container = jQuery(container),
     // we attach the popup to the container instead of body, so that it is destroyed when we close the graph
+    var $container = jQuery(container),
+        popupClass = "network-popUp",
         operationClass = "network-popUp__operation-title",
-        $popup = $container.find(".network-popUp"),
+        fieldsClass = "network-popUp__edit-fields",
+        $popup = $container.find("." + popupClass),
         $title, key, $table, $saveButton, $cancelButton;
 
     // prepare the popup DOM
     if(!$popup[0])
     {
-        $popup = jQuery('<div class="network-popUp"></div>')
-                .prependTo($container);
+        $popup = jQuery('<div>')   .addClass(popupClass).prependTo($container);
         $title = jQuery('<span class="' + operationClass + '"></span> <br>')
                 .appendTo($popup);
-        $table = jQuery('<table></table>').appendTo($popup);
+        $table = jQuery('<table>') .addClass(fieldsClass).appendTo($popup);
         $saveButton = jQuery('<button class="saveButton">save</button>')
                 .appendTo($popup);
         $cancelButton = jQuery('<button class="cancelButton">cancel</button>')
                 .appendTo($popup);
     } else {
         $title = $popup.find("." + operationClass);
-        $table = $popup.find("table");
+        $table = $popup.find("." + fieldsClass);
         $saveButton = $popup.find(".saveButton");
         $cancelButton = $popup.find(".cancelButton");
     }
     $title[0].innerHTML = operationTitle;
     for(key of ['label']) // don't bother user with ids
-        $table.append('<tr><td>'+key+'</td><td>'+
+        $table.append('<tr><td>' + key + '</td><td>' +
             '<textarea class="dataEditor data-'+key+'">'+data[key]+'</textarea>'+
         '</td></tr>');
 
