@@ -326,12 +326,12 @@ store.addNotification("ColorPalette", function(smth, doc) { refreshStyles(cssNam
 //	/* vertical alignment of text */
 //	display: block;
 //}
+//.dataEditor:hover {
+//	background-color: #eeeeff;
+//}
 //.dataEditor:focus {
 //	outline: none; /* cancel Chrome style */
 //	background-color: #f5f5ff;
-//}
-//.dataEditor:hover {
-//	background-color: #eeeeff;
 //}
 ///*}}}*/
 /***
@@ -349,6 +349,20 @@ store.addNotification("ColorPalette", function(smth, doc) { refreshStyles(cssNam
 })();
 //}}}
 //{{{
+// helper not to store empty options
+var collapseObject = function(obj, keepNulls) {
+
+    for(var key in obj) {
+        // typeof null === 'object'
+        if(typeof obj[key] !== 'object') continue;
+        collapseObject(obj[key], keepNulls);
+        //for non-jQuery, see https://stackoverflow.com/a/32108184/3995261
+        if(jQuery.isEmptyObject(obj[key]) // returns true for non-objects, at least numbers
+            && (!keepNulls || keepNulls && (obj[key] !== null) ) )
+            delete obj[key];
+    }
+};
+
 window.advancedMerge = function(reciever, source, preserveExisting)
 {
     for(var key in source) {
@@ -538,18 +552,6 @@ config.macros.graph.handler = function(place, macroName, params, wikifier, param
         });
 };
 
-// helper not to store empty options
-var collapsObject = function(obj){
-    for(var key in obj) {
-        if(typeof obj[key] !== 'object') // typeof null === 'object'
-            continue;
-        collapsObject(obj[key]);
-        //for non-jQuery, see https://stackoverflow.com/a/32108184/3995261
-        if(jQuery.isEmptyObject(obj[key])) // returns true for non-objects, at least numbers
-            delete obj[key];
-    }
-};
-
 config.macros.graph.createEditPopup = function(container, operationTitle, data, callback)
 {
     var $container = jQuery(container),
@@ -616,8 +618,9 @@ config.macros.graph.createEditPopup = function(container, operationTitle, data, 
             data[key] = inputElement.value;
         });
 
-        // fix applying empty option trees creating undesirable shadows et al.
-        collapsObject(data);
+        // fix applying empty option trees creating undesirable shadows et al.;
+        // keep nulls as deleted properties are set to null
+        collapseObject(data, true);
 
         clearPopUp();
         callback(data);
