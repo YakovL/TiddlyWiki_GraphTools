@@ -387,7 +387,7 @@ config.macros.graph.getEvaluated = function(evalExpression) { // a helper
 };
 config.macros.graph.getStoredDataAndOptions = function(tiddlerTitle,section)
 {
-    var container = tiddlerTitle + (section ? "##"+section : ""),
+    var container = tiddlerTitle + (section ? "##" + section : ""),
         dataAndOptionsText = store.getTiddlerText(container),
         dataAndOptions = dataAndOptionsText ? JSON.parse(dataAndOptionsText) : {};
     // storage format can be changed but return value should be
@@ -406,22 +406,20 @@ config.macros.graph.handler = function(place, macroName, params, wikifier, param
         nodes = new vis.DataSet(this.getEvaluated(getParam(pParams, "nodes", "[]"))),
         edges = new vis.DataSet(this.getEvaluated(getParam(pParams, "edges", "[]"))),
         defaultManipulation = {
-        addNode: function (data, callback) {
-            var network = this, container = network.body.container;
-            config.macros.graph.createEditPopup(container, "Add Node", data,callback);
-        },
-        editNode: function (data, callback) {
-            var network = this, container = network.body.container;
-            config.macros.graph.createEditPopup(container, "Edit Node", data,callback);
-        },
-        addEdge: function (data, callback) {
-
-            if (data.from == data.to) {
-                if (confirm("Do you want to connect the node to itself?"))
-                    callback(data);
-            } else
-                callback(data);
-        }
+            addNode: function (data, callback) {
+                var network = this, container = network.body.container;
+                config.macros.graph.createEditPopup(container, "Add Node", data, callback);
+            },
+            editNode: function (data, callback) {
+                var network = this, container = network.body.container;
+                config.macros.graph.createEditPopup(container, "Edit Node", data, callback);
+            },
+            addEdge: function (data, callback) {
+                if (data.from == data.to) {
+                    if (confirm("Do you want to connect the node to itself?"))
+                        callback(data);
+                } else  callback(data);
+            }
         },
         useDefaultManipulation = getParam(pParams, "manipulation", paramString.match( /\smanipulation(\s|$)/gm)),
         macroOptions = this.getEvaluated(getParam(pParams, "options", "{}")),
@@ -455,8 +453,8 @@ config.macros.graph.handler = function(place, macroName, params, wikifier, param
     window.advancedMerge(options, nonStoredOptions, true);
 
     var data = {
-        nodes: nodes,
-        edges: edges
+            nodes: nodes,
+            edges: edges
         },
         stabilizeOnce = getParam(pParams,"stabilizeOnce",
         paramString.match(/\sstabilizeOnce[\s>]/)),
@@ -467,16 +465,16 @@ config.macros.graph.handler = function(place, macroName, params, wikifier, param
 
     // create a container,
     // show a warning if manipulation was activated but container is not set
-    var uniqueId = "visGraph"+Math.floor(Math.random()*1000);
+    var uniqueId = "visGraph" + Math.floor(Math.random()*1000);
     while(document.getElementById(uniqueId))
         uniqueId += 1;
     var id = userSetId || uniqueId,
 
         wrapper = createTiddlyElement(place,"div",null,"visGraphWrapper");
     if(options.manipulation && !storageContainer)
-        createTiddlyElement(wrapper,'span',null,'dataLossWarning',
+        createTiddlyElement(wrapper, 'span', null, 'dataLossWarning',
             "Warning: you have enabled manipulation options but haven't set the first unnamed/dataAndOptions parameter so your changes won't be saved anywhere.");
-    var container = createTiddlyElement(wrapper,"div",id,"visGraph");
+    var container = createTiddlyElement(wrapper, "div", id, "visGraph");
 
     if(width) container.style.width = width;
     if(height) container.style.height = height;
@@ -587,8 +585,8 @@ config.macros.graph.createEditPopup = function(container, operationTitle, data, 
 
     var adjustHeightToContent = function()
     {
-        var defaultHeight = 10;
-        var maxHeight = 150;
+        var defaultHeight = 10,
+            maxHeight = 150;
         // take padding into account:
         var computedStyle = window.getComputedStyle(this, null),
             paddingTop = computedStyle.getPropertyValue('padding-top'),
@@ -613,10 +611,10 @@ config.macros.graph.createEditPopup = function(container, operationTitle, data, 
     };
     var saveData = function() // data,callback – from closure
     {
-        $table.find('.dataEditor').each(function(index,inputElement){
+        $popup.find('.dataEditor').each(function(index, inputElement) {
             var keyMatch = /\bdata-(\S+)\b/.exec(inputElement.className),
                 key = keyMatch ? keyMatch[1] : null;
-            data[key] = inputElement.value;
+            if(key) data[key] = inputElement.value;
         });
 
         // fix applying empty option trees creating undesirable shadows et al.;
@@ -693,7 +691,7 @@ config.macros.graph.saveDataAndOptions = function(network,newOptions) {
         return JSON.parse(JSON.stringify(obj));
     };
 
-    // get JSON with nodes, edges and options for storage
+    // get data describing nodes, edges and options for storage
     var storedEdges = [], storedEdge, storedNodes = [], storedNode;
     var indexIds = {}, idIndex = 1, end;
 
