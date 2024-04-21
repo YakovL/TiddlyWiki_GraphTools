@@ -564,8 +564,7 @@ config.macros.graph.createEditPopup = function(container, operationTitle, data, 
     if(!$popup[0])
     {
         $popup = jQuery('<div>')   .addClass(popupClass).prependTo($container);
-        $title = jQuery('<span class="' + operationClass + '"></span> <br>')
-                .appendTo($popup);
+        $title = jQuery('<header>').addClass(operationClass).appendTo($popup);
         $table = jQuery('<table>') .addClass(fieldsClass).appendTo($popup);
         $saveButton = jQuery('<button class="saveButton">save</button>')
                 .appendTo($popup);
