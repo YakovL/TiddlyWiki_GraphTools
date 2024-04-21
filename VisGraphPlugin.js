@@ -306,7 +306,7 @@ store.addNotification("ColorPalette", function(smth, doc) { refreshStyles(cssNam
 //	text-align:	center;
 //    }
 //
-//.operation {
+//.network-popUp__operation-title {
 //	font-size: 1.5em;
 //}
 //.network-popUp table, .network-popUp tr, .network-popUp td {
@@ -554,6 +554,7 @@ config.macros.graph.createEditPopup = function(container, operationTitle, data, 
 {
     var $container = jQuery(container),
     // we attach the popup to the container instead of body, so that it is destroyed when we close the graph
+        operationClass = "network-popUp__operation-title",
         $popup = $container.find(".network-popUp"),
         $title, key, $table, $saveButton, $cancelButton;
 
@@ -562,7 +563,7 @@ config.macros.graph.createEditPopup = function(container, operationTitle, data, 
     {
         $popup = jQuery('<div class="network-popUp"></div>')
                 .prependTo($container);
-        $title = jQuery('<span class="operation"></span> <br>')
+        $title = jQuery('<span class="' + operationClass + '"></span> <br>')
                 .appendTo($popup);
         $table = jQuery('<table></table>').appendTo($popup);
         $saveButton = jQuery('<button class="saveButton">save</button>')
@@ -570,7 +571,7 @@ config.macros.graph.createEditPopup = function(container, operationTitle, data, 
         $cancelButton = jQuery('<button class="cancelButton">cancel</button>')
                 .appendTo($popup);
     } else {
-        $title = $popup.find(".operation");
+        $title = $popup.find("." + operationClass);
         $table = $popup.find("table");
         $saveButton = $popup.find(".saveButton");
         $cancelButton = $popup.find(".cancelButton");
